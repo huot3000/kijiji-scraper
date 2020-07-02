@@ -71,7 +71,7 @@ def get_urls(no_pages):
 
 def get_details(urls):
     
-    urls = urls[6766:]
+    # urls = urls[6766:]
     print(len(urls))
 
     i =0;
