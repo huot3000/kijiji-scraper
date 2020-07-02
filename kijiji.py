@@ -10,51 +10,51 @@ from os import path
 
 url = 'https://www.kijiji.ca/b-appartement-condo/ville-de-montreal'
 baseurl = 'https://www.kijiji.ca'
-baseForOntario = '/c37l1700281'
-pageNos = '/page-'
-# TODO
-apartment = 'v-apartments-condos'
-roomRent = 'room rent'
-adurl = []
+base_quebec = '/c37l1700281'
+page_nos = '/page-'
+apartment = 'b-appartement-condo'
+room_rent = 'room rent'
+ad_url = []
 listing = []
-urlToSave = []
+url_to_save = []
 title = []
 prices = []
 description = []
 location = []
-datePosted = []
+date_posted = []
 features = []
-linksFromText = []
-listingType = []
-adId = []
-savePoints = [1000,2000,3000,4000,5000,6000,7000]
+links_from_text = []
+listing_type = []
+ad_id = []
+save_points = [1000,2000,3000,4000,5000,6000,7000]
 
-def getUrls(noPages):
+# Getting the URLs
+def get_urls(no_pages):
 
     if path.exists('links.txt'):
         with open('links.txt', 'r') as f:
-            linksFromText = f.readlines()
-        getDetails(linksFromText)
+            links_from_text = f.readlines()
+        get_details(links_from_text)
     else:
-        for i in range(noPages):
-            url_final = url+pageNos+str(i)+baseForOntario
+        for i in range(no_pages):
+            url_final = url+page_nos+str(i)+base_quebec
             response = requests.get(url_final)
             soup = BeautifulSoup(response.text, "html.parser")
             advtTitles = soup.findAll('div', attrs={'class' : 'title'})
             try:
                 for link in advtTitles:
                     adlink = baseurl+link.find('a')['href']
-                    adurl.append(adlink)
+                    ad_url.append(adlink)
             except(Exception):
                 print(Exception)
             #time.sleep(1)
-        print(len(adurl))
+        print(len(ad_url))
 
         ## since connection gets closed by the server its better to save the links to a text file
-        saveLinks(adurl)
-        getDetails(adurl)
+        save_links(ad_url)
+        get_details(ad_url)
 
-def getDetails(urls):
+def get_details(urls):
     
     urls = urls[6766:]
     print(len(urls))
@@ -78,7 +78,7 @@ def getDetails(urls):
                 adLocation = soup.find('span', attrs={'class' : 'address-3617944557'})
                 location.append(adLocation)
                 date = soup.find('time')   
-                datePosted.append(date)
+                date_posted.append(date)
 
                 # get features from the listing 
                 # we have two kinds of listing apartments and room rentals.
@@ -90,10 +90,10 @@ def getDetails(urls):
                         dd = ft.find_all('div')
                         listDetails = listDetails + str(dd) + " || "
                     features.append(listDetails)
-                    listingType.append(apartment)
-                    urlToSave.append(url)
-                    adid = getAdId(url)
-                    adId.append(adid)
+                    listing_type.append(apartment)
+                    url_to_save.append(url)
+                    ad_id = get_ad_id(url)
+                    ad_id.append(ad_id)
                 else:                
                     adfts = soup.find_all('dl', attrs={'class' : 'itemAttribute-983037059'})
                     for ft in adfts:
@@ -101,59 +101,59 @@ def getDetails(urls):
                         dt = ft.find('dt').text
                         listDetails = listDetails + str(dt) + " : " + str(dd) + " || "
                     features.append(listDetails)
-                    listingType.append(roomRent)
-                    urlToSave.append(url)
-                    adid = getAdId(url)
-                    adId.append(adid)
+                    listing_type.append(room_rent)
+                    url_to_save.append(url)
+                    ad_id = get_ad_id(url)
+                    ad_id.append(ad_id)
                 print("Scraping listing : ",str(i))
                 #response.close()
                 i += 1
-                if i in savePoints:
-                    saveToDisk(i)
+                if i in save_points:
+                    save_to_disk(i)
                     #break
                 time.sleep(1)
             except Exception as e:
                 pass
-        saveToDisk(i)
+        save_to_disk(i)
     except Exception as e: 
         print(e)
         pass
-    #saveToDisk()
+    #save_to_disk()
 
-def getAdId(advt):
+def get_ad_id(advt):
     advtList = advt.split("/")
     adlen = len(advtList)
     return advtList[adlen-1]
 
 
-def saveToDisk(i):
+def save_to_disk(i):
     print("saving ***")
     name='kijiji'+str(i)+'.csv'
-    d = {'adId':adId, 'Title':title,'Price':prices,'Description':description, 'Location':location,'Ddate Posted':datePosted, 'Location':location, 'Features' : features, 'URL':urlToSave, 'Type' : listingType}
+    d = {'ad_id':ad_id, 'Title':title,'Price':prices,'Description':description, 'Location':location,'Ddate Posted':date_posted, 'Location':location, 'Features' : features, 'URL':url_to_save, 'Type' : listing_type}
     df = pd.concat([pd.Series(v, name=k) for k, v in d.items()], axis=1)
     df.to_csv(name,index=False)
-    resetAll()
+    reset_all()
     
-def saveLinks(liks):
+def save_links(links):
     with open('links.txt', 'w') as f:
-        for item in liks:
+        for item in links:
             f.write("%s\n" % item)
 
     f.close()
 
-def resetAll():
+def reset_all():
     print('cleaning')
-    adId.clear()
+    ad_id.clear()
     title.clear()
     prices.clear()
     description.clear()
-    datePosted.clear()
+    date_posted.clear()
     location.clear()
     features.clear()
-    urlToSave.clear()
-    listingType.clear()
+    url_to_save.clear()
+    listing_type.clear()
     
 
 # call main methond to start scraping by passing number of pages wanted to scrape  
 no_pages = 300
-getUrls(no_pages)
+get_urls(no_pages)

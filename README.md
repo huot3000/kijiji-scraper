@@ -1,2 +1,2 @@
 # kijiji-scraper
-a python script to scrape kijiji data - forked from amald94
+A python script to scrape Montreal kijiji data - forked from amald94
