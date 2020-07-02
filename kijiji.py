@@ -8,10 +8,11 @@ import numpy
 import time
 from os import path
 
-url = 'https://www.kijiji.ca/b-for-rent/ontario'
+url = 'https://www.kijiji.ca/b-appartement-condo/ville-de-montreal'
 baseurl = 'https://www.kijiji.ca'
-baseForOntario = '/c30349001l9004'
+baseForOntario = '/c37l1700281'
 pageNos = '/page-'
+# TODO
 apartment = 'v-apartments-condos'
 roomRent = 'room rent'
 adurl = []
