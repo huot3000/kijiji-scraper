@@ -28,7 +28,7 @@ listing_type = []
 ad_id = []
 save_points = [1000,2000,3000,4000,5000,6000,7000]
 
-# Getting the URLs
+# getting the URLs
 def get_urls(no_pages):
 
     if path.exists('links.txt'):
