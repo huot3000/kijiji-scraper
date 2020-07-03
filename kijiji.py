@@ -1,7 +1,7 @@
 import requests
 import urllib.request
 # from lxml.hmtl import fromstring
-from itertools import cycle
+# from itertools import cycle
 import traceback
 import time
 from bs4 import BeautifulSoup
